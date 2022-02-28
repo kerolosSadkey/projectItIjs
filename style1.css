@@ -1,0 +1,11 @@
+.col-4{
+    /* margin:0 2%; */
+}
+.card{
+    border-radius: 2%;
+}
+.card-img-top{
+    /* width: 50%; */
+    /* height: 50%; */
+    object-fit: fill;
+}

@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <!-- <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-1BmE4kWBq78iYhFldvKuhfTAU6auU8tT94WrHftjDbrCEXSU1oBoqyl2QvZ6jIW3" crossorigin="anonymous"> -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css" />
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet"
+        integrity="sha384-1BmE4kWBq78iYhFldvKuhfTAU6auU8tT94WrHftjDbrCEXSU1oBoqyl2QvZ6jIW3" crossorigin="anonymous" />
+    <!-- <link rel="stylesheet" href="style.css"> -->
+    <link rel="stylesheet" href="style1.css" />
+    <script src="https://kit.fontawesome.com/9cd9c23f11.js" crossorigin="anonymous"></script>
+    <title>Document</title>
+</head>
+
+<body onload="showCart()">
+    <!-- Header -->
+    <header>
+        <nav class="navbar navbar-expand-lg navbar-light bg-light">
+            <div class="container-fluid">
+                <h1 class="navbar-brand">Noon</h1>
+                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav"
+                    aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+                    <span class="navbar-toggler-icon"></span>
+                </button>
+                <div class="collapse navbar-collapse" id="navbarNav">
+                    <ul class="navbar-nav">
+                        <li class="nav-item">
+                            <a class="nav-link active" aria-current="page" href="Home.html">
+                                Home
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" onclick="(function m(){location.href = './category.html?mobile';})()">Mobiles</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" onclick="(function m(){location.href = './category.html?laptop';})()">Laptops</a>
+                        </li>
+                        <li class="nav-item d-none">
+                            <a class="nav-link" href="#">Log in</a>
+                        </li>
+                        <li class="nav-item d-none">
+                            <a class="nav-link" href="#">Sign Up</a>
+                        </li>
+                        <li class="nav-item d-none">
+                            <a class="nav-link" href="#">Log out</a>
+                        </li>
+                    </ul>
+                </div>
+                <a href="Cart.html" class="navbar-brand">
+                    Cart
+                    <i class="fa fa-shopping-cart">
+                        <span id="cart"
+                            class="position-absolute top-0 start-90 translate-small badge rounded-pill bg-danger">
+                            1
+                        </span>
+                    </i>
+                </a>
+            </div>
+        </nav>
+    </header>
+
+    <!-- Container Of Product Information -->
+    <div id="container">
+        <div class="row" id="contain"></div>
+    </div>
+
+    <!-- Script for Fetching Product Information from JSON File -->
+    <script>
+        var existingCart = JSON.parse(localStorage.getItem('CartItem'))
+        var choosenProducts = [];
+        var xhr = new XMLHttpRequest();
+
+        function showCart() {
+            updateCart();
+            if (existingCart !== null) {
+                xhr.onload = function () {
+                    var products = JSON.parse(this.response);
+                    for (let i = 0; i < products.length; i++) {
+                        for (let j = 0; j < existingCart.length; j++) {
+
+                            if (existingCart[j]["id"] === products[i].id) {
+                                choosenProducts.push(products[i]);
+
+                            }
+
+                        }
+                    }
+                    choosenProducts.forEach(item => {
+                        var elem = document.getElementById("contain");
+                        elem.innerHTML +=
+                            `<div class="col-12">
+                                <div class="card" >
+                                    <img src="${item.imageURL}" class="card-img-top" alt="..."> 
+                                    <div class="card-body"> 
+                                        <h5 class="card-title"> ${item.name} </h5> 
+                                        <label for="Quantity"> Quantity</label>
+                                         <input id="Quantity" type="number" min="1" /><br>
+
+                                        <a href="#" class="btn btn-primary" onClick="RemoveFromCart('${item.id}')"> Remove From Cart </a>
+                                </div>
+                            </div>
+                     </div>`;
+                    });
+                }
+
+            }
+        }
+        //Add Products to Cart
+        function RemoveFromCart(itemId) {
+
+            for (let i = 0; i < choosenProducts.length; i++) {
+                if (choosenProducts[i].id === itemId) {
+                    choosenProducts.splice(i, 1);
+                }
+            }
+            localStorage.removeItem("CartItem");
+            localStorage.setItem("CartItem", JSON.stringify(choosenProducts));
+            location.reload();
+
+        }
+        function updateCart() {
+            var existingCart = JSON.parse(localStorage.getItem('CartItem'))
+            if (existingCart !== null) {
+                document.getElementById('cart').innerText = existingCart.length
+            } else {
+                document.getElementById('cart').innerHTML.value = ''
+            }
+        }
+
+        xhr.open('GET', './products.json')
+        xhr.send()
+    </script>
+
+    <!-- Script for Bootstrap -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"
+        integrity="sha384-ka7Sk0Gln4gmtz2MlQnikT1wXgYsOg+OMhuP+IlRH9sENBO0LRn5q+8nbTov4+1p"
+        crossorigin="anonymous"></script>
+</body>
+
+</html>
