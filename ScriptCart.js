@@ -1,37 +1,61 @@
-function removeFormCart(productId) {
-    var currentUserId=localStorage.getItem("currUserId");
+function RemoveFromCart(itemId) {
+
+    var currentUserId;
+    if(localStorage.getItem("isLogged")){
+        currentUserId =localStorage.getItem("currUserId");
+    }
+    else if (sessionStorage.getItem("isLogged")){
+        currentUserId =sessionStorage.getItem("currUserId");
+    }
     var currentKey= "cart_"+currentUserId
-    var storageProducts = JSON.parse(localStorage.getItem(currentKey));
-    var products = storageProducts.filter(product => product.productId !== productId);
-    localStorage.setItem(currentKey, JSON.stringify(products));
-    Swal.fire("Successfully", "Deleted Successfully!", "success");
-    
+    var products = [];
+    if (localStorage.getItem(currentKey)) 
+         products = JSON.parse(localStorage.getItem(currentKey));
+    if(products.find(p=>p.productId==itemId)){
+        products=  products.filter(product => product.productId !== itemId);
+        localStorage.setItem(currentKey, JSON.stringify(products));
+        location.reload();
+    }
 }
 
-
-function decreaseInCart(){
-    _id="mob_2"
+function decreaseInCart(_id){
+    // _id="mob_2"
     var products = [];
-    var currentUserId=localStorage.getItem("currUserId");
+    // var currentUserId=localStorage.getItem("currUserId");
+    var currentUserId;
+        if(localStorage.getItem("isLogged")){
+            currentUserId =localStorage.getItem("currUserId");
+        }
+        else if (sessionStorage.getItem("isLogged")){
+            currentUserId =sessionStorage.getItem("currUserId");
+        }
     var currentKey= "cart_"+currentUserId
     if (localStorage.getItem(currentKey)) 
             products = JSON.parse(localStorage.getItem(currentKey));
           
     if(products.find(p=>p.productId==_id)){
           products.find(p=>p.productId==_id).qauntity -=1
-
+          document.getElementById(_id).innerText =  products.find(p=>p.productId==_id).qauntity; 
           if( products.find(p=>p.productId==_id).qauntity== 0 )
+          {
                    products=  products.filter(product => product.productId !== _id);
-          
+                   localStorage.setItem(currentKey, JSON.stringify(products));
+                   location.reload();  
+          }
            localStorage.setItem(currentKey, JSON.stringify(products));
-              
+        //    location.reload(); 
       }
 }
 
 
-function IncearseInCart(){
-    _id="mob_2"
-    var currentUserId=localStorage.getItem("currUserId");
+function IncearseInCart(_id){
+    var currentUserId;
+        if(localStorage.getItem("isLogged")){
+            currentUserId =localStorage.getItem("currUserId");
+        }
+        else if (sessionStorage.getItem("isLogged")){
+            currentUserId =sessionStorage.getItem("currUserId");
+        }
     var currentKey= "cart_"+currentUserId
     var products = [];
     if (localStorage.getItem(currentKey)) 

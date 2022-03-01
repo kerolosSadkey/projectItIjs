@@ -1,10 +1,21 @@
 function addToCart() {
-  //  _id="mob_2"
-    qauntity=parseInt(document.getElementById("qty").value);
-     var x = localStorage.getItem("isLogged");
-     console.log(x);
-     if (localStorage.getItem("isLogged")||sessionStorage.getItem("isLogged")) {
-        var currentUserId=localStorage.getItem("currUserId");
+    
+    // var x = localStorage.getItem("isLogged")=="true"||sessionStorage.getItem("isLogged")=="true";
+    // alert(x)
+     if (localStorage.getItem("isLogged")=="true"||sessionStorage.getItem("isLogged")=="true") {
+        qauntity=parseInt(document.getElementById("qty").value);
+        if((qauntity<1)||isNaN(qauntity)){
+            Swal.fire({
+                title: "Wrong", text: "Invalid Quantity",  });
+                return;
+        }
+        var currentUserId;
+        if(localStorage.getItem("isLogged")){
+            currentUserId =localStorage.getItem("currUserId");
+        }
+        else if (sessionStorage.getItem("isLogged")){
+            currentUserId =sessionStorage.getItem("currUserId");
+        }
         var currentKey= "cart_"+currentUserId
             var products = []
            
@@ -14,22 +25,19 @@ function addToCart() {
             }
                 
             if(products.find(p=>p.productId==_id)){
-    
-                    Swal.fire({ title: "Attention",text: "this product already exists in cart !!",}).then(function(){
-                            products.find(p=>p.productId==_id).qauntity += qauntity
-                            localStorage.setItem(currentKey, JSON.stringify(products));
-                        })
+                products.find(p=>p.productId==_id).qauntity += qauntity
+                localStorage.setItem(currentKey, JSON.stringify(products));
             
             }else{
                 products.push({ 'productId': _id,"qauntity": qauntity});
                 localStorage.setItem(currentKey, JSON.stringify(products));
             }
-         
+            Swal.fire({ title: "Done",text: "the product has been adde successfully  ",})
  
      } else{
  
        Swal.fire({
-             title: "Attention", text: "you must submit at first !!",  }).then(function(){
+             title: "Attention", text: "you must login at first !!",  }).then(function(){
                   location.replace("login.html")
               })
       

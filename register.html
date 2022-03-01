@@ -11,7 +11,19 @@
             padding: 15px;
             margin: auto;
         }
+        .mod-link{
+          cursor: grab;
+      }
     </style>
+    <title>Register</title>
+     <script>
+      if(localStorage.getItem("isLogged")=='true'){
+          location.assign("./index.html");
+        }
+        else if(sessionStorage.getItem("isLogged")=='true'){
+          location.assign("./index.html");
+        }
+    </script>
   </head>
   <body class="text-center">
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM" crossorigin="anonymous"></script>
@@ -24,19 +36,19 @@
           <div class="collapse navbar-collapse" id="navbarNav">
             <ul class="navbar-nav">
               <li class="nav-item">
-                <a class="nav-link" onclick="(function m(){location.href = './category.html?mobile';})()">Mobiles</a>
+                <a class="nav-link active" aria-current="page" href="./index.html">Home</a>
               </li>
               <li class="nav-item">
-                <a class="nav-link" onclick="(function m(){location.href = './category.html?laptop';})()" >Labtops</a>
+                <a class="nav-link mod-link" onclick="(function m(){location.href = './category.html?mobile';})()">Mobiles</a>
+              </li>
+              <li class="nav-item">
+                <a class="nav-link mod-link" onclick="(function m(){location.href = './category.html?laptop';})()" >Labtops</a>
               </li>
               <li class="nav-item ">
                 <a class="nav-link" href="./Cart.html" >Cart</a>
               </li>
-              <li class="nav-item d-none">
+              <li class="nav-item d-none" id="login">
                 <a class="nav-link" href="./login.html" >Log in</a>
-              </li>
-              <li class="nav-item d-none">
-                <a class="nav-link" href="register.html" >Sign Up</a>
               </li>
             </ul>
           </div>
@@ -96,6 +108,22 @@
           </div>
         </div>
       </section>
+
+
+
+      <script>
+        var login = document.getElementById("login");
+        var logoute = document.getElementById("logout");
+        if(localStorage.getItem("isLogged")=='true'){
+          logoute.classList.remove("d-none")
+        }
+        else if(sessionStorage.getItem("isLogged")=='true'){
+          logoute.classList.remove("d-none")
+        }else{
+          login.classList.remove("d-none");
+        }
+      </script>
+
    <script>
            function User(name, email, password,id){
                 this.name = name;
@@ -130,7 +158,7 @@
             }
             else{
                 var user = new User(name, email,password,id);
-                let userCart = "cart_" + newUser.id;
+                let userCart = "cart_" + user.id;
                 if(localStorage.getItem('Users')) {
 		            var users = []
 		            users = JSON.parse(localStorage.getItem('Users') || "[]");

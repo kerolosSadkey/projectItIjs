@@ -12,15 +12,26 @@
     <!-- <link rel="stylesheet" href="style.css"> -->
     <link rel="stylesheet" href="style1.css" />
     <script src="https://kit.fontawesome.com/9cd9c23f11.js" crossorigin="anonymous"></script>
-    <title>Document</title>
+    <title>Cart</title>
+    <script>
+             var x = (localStorage.getItem("isLogged")=="true"||sessionStorage.getItem("isLogged")=="true");
+            if(!x){
+                location.assign("./login.html")
+            }
+    </script>
+    <style>
+        .mod-link{
+            cursor: grab;
+        }
+    </style>
 </head>
 
-<body onload="showCart()">
+<body >
     <!-- Header -->
     <header>
         <nav class="navbar navbar-expand-lg navbar-light bg-light">
             <div class="container-fluid">
-                <h1 class="navbar-brand">Noon</h1>
+                <h1 class="navbar-brand">Navbar</h1>
                 <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav"
                     aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
                     <span class="navbar-toggler-icon"></span>
@@ -28,24 +39,24 @@
                 <div class="collapse navbar-collapse" id="navbarNav">
                     <ul class="navbar-nav">
                         <li class="nav-item">
-                            <a class="nav-link active" aria-current="page" href="Home.html">
+                            <a class="nav-link active" aria-current="page" href="index.html">
                                 Home
                             </a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link" onclick="(function m(){location.href = './category.html?mobile';})()">Mobiles</a>
+                            <a class="nav-link mod-link" onclick="(function m(){location.href = './category.html?mobile';})()">Mobiles</a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link" onclick="(function m(){location.href = './category.html?laptop';})()">Laptops</a>
+                            <a class="nav-link mod-link" onclick="(function m(){location.href = './category.html?laptop';})()">Laptops</a>
                         </li>
-                        <li class="nav-item d-none">
-                            <a class="nav-link" href="#">Log in</a>
+                        <li class="nav-item d-none" id="login">
+                            <a class="nav-link" href="./login.html" >Log in</a>
                         </li>
-                        <li class="nav-item d-none">
-                            <a class="nav-link" href="#">Sign Up</a>
+                        <li class="nav-item d-none" id="register">
+                            <a class="nav-link" href="./register.html" >Sign Up</a>
                         </li>
-                        <li class="nav-item d-none">
-                            <a class="nav-link" href="#">Log out</a>
+                        <li class="nav-item d-none" id="logout">
+                            <a class="nav-link mod-link" onclick="logout()" >Log out</a>
                         </li>
                     </ul>
                 </div>
@@ -54,7 +65,7 @@
                     <i class="fa fa-shopping-cart">
                         <span id="cart"
                             class="position-absolute top-0 start-90 translate-small badge rounded-pill bg-danger">
-                            1
+                            
                         </span>
                     </i>
                 </a>
@@ -66,70 +77,68 @@
     <div id="container">
         <div class="row" id="contain"></div>
     </div>
-
+    <script src="./ScriptCart.js"></script>
+    <script src="./logout.js"></script>
+    <script>
+        var login = document.getElementById("login");
+        var register = document.getElementById("register");
+        var logoute = document.getElementById("logout");
+        if(localStorage.getItem("isLogged")=='true'){
+          logoute.classList.remove("d-none")
+        }
+        else if(sessionStorage.getItem("isLogged")=='true'){
+          logoute.classList.remove("d-none")
+        }else{
+          login.classList.remove("d-none");
+          register.classList.remove("d-none");
+        }
+        
+      </script>
     <!-- Script for Fetching Product Information from JSON File -->
     <script>
-        var existingCart = JSON.parse(localStorage.getItem('CartItem'))
-        var choosenProducts = [];
+        var currentUserId;
+        if(localStorage.getItem("isLogged")){
+            currentUserId =localStorage.getItem("currUserId");
+        }
+        else if (sessionStorage.getItem("isLogged")){
+            currentUserId =sessionStorage.getItem("currUserId");
+        }
+        var currentKey= "cart_"+currentUserId
+            var cartProducts = []
+           
+            if (localStorage.getItem(currentKey)) {
+                cartProducts = JSON.parse(localStorage.getItem(currentKey));
+                // console.log(cartProducts);
+            }
+            document.getElementById("cart").innerText=cartProducts.length;
+
+        
         var xhr = new XMLHttpRequest();
-
-        function showCart() {
-            updateCart();
-            if (existingCart !== null) {
-                xhr.onload = function () {
-                    var products = JSON.parse(this.response);
-                    for (let i = 0; i < products.length; i++) {
-                        for (let j = 0; j < existingCart.length; j++) {
-
-                            if (existingCart[j]["id"] === products[i].id) {
-                                choosenProducts.push(products[i]);
-
-                            }
-
-                        }
-                    }
-                    choosenProducts.forEach(item => {
-                        var elem = document.getElementById("contain");
-                        elem.innerHTML +=
-                            `<div class="col-12">
+        
+        xhr.onload = function(){
+            var products = JSON.parse(this.response);
+            cartProducts.forEach(element => {
+                var cartItem = products.find(elem=>elem.id==element.productId);
+                var container = document.getElementById("contain");
+                container.innerHTML +=
+                            `<div class="col-4">
                                 <div class="card" >
-                                    <img src="${item.imageURL}" class="card-img-top" alt="..."> 
+                                   <div class="divimg"> <img src="${cartItem.imageURL}" class="card-img-top" alt="..."> <div>
                                     <div class="card-body"> 
-                                        <h5 class="card-title"> ${item.name} </h5> 
-                                        <label for="Quantity"> Quantity</label>
-                                         <input id="Quantity" type="number" min="1" /><br>
-
-                                        <a href="#" class="btn btn-primary" onClick="RemoveFromCart('${item.id}')"> Remove From Cart </a>
+                                        <h5 class="card-title"> ${cartItem.name} </h5> 
+                                        <label for="Quantity"> Quantity :</label>
+                                        <a  class="btn btn-primary" onClick="decreaseInCart('${cartItem.id}')"> Dec </a>
+                                        <span class="text-danger" id="${cartItem.id}"> ${element.qauntity} </span>
+                                        <a  class="btn btn-primary" onClick="IncearseInCart('${cartItem.id}')"> Inc </a><br><br>
+                                        <p class="text-muted"> Unit Price : ${cartItem.price}</p>
+                                        <a  class="btn btn-primary" onClick="RemoveFromCart('${cartItem.id}')"> Remove From Cart </a>
                                 </div>
                             </div>
                      </div>`;
-                    });
-                }
-
-            }
+            });
         }
-        //Add Products to Cart
-        function RemoveFromCart(itemId) {
-
-            for (let i = 0; i < choosenProducts.length; i++) {
-                if (choosenProducts[i].id === itemId) {
-                    choosenProducts.splice(i, 1);
-                }
-            }
-            localStorage.removeItem("CartItem");
-            localStorage.setItem("CartItem", JSON.stringify(choosenProducts));
-            location.reload();
-
-        }
-        function updateCart() {
-            var existingCart = JSON.parse(localStorage.getItem('CartItem'))
-            if (existingCart !== null) {
-                document.getElementById('cart').innerText = existingCart.length
-            } else {
-                document.getElementById('cart').innerHTML.value = ''
-            }
-        }
-
+        
+        //  showCart();
         xhr.open('GET', './products.json')
         xhr.send()
     </script>
